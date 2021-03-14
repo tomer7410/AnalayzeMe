@@ -1,0 +1,84 @@
+ <%include ../partials/header%>            -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.1/Chart.min.js"></script>
+                                                                                                             
+     <div class="container">
+        <div class="jumbotron">
+          <h1 class="display-4">Welcome To AnalyzeMe!</h1>
+          <p class="lead">View all analytics from any possible field</p>
+          <div>
+            <a class="btn btn-primary btn-lg" href="/campgrounds/new" role="button">Add New model</a>
+                
+          </div>
+        </div> 
+            < <div class="row text-center" style="display:flex; flex-wrap:wrap;"> 
+                
+             <% campgrounds.forEach(function(campground) {  %>
+                 <div class=" col-md-3  col-sm-6">
+                   <div class="img-thumbnail" style="margin-top:10px;" > 
+                      <canvas id="<%=campground.id%>"></canvas>
+                         <div class="caption">
+                            <h4>"<%=campground.name%>"</h4>
+                        </div>
+                        <p>
+                         <a href="/campgrounds/<%=campground._id%>" class="btn btn-primary">More Info</a> 
+                        </p>
+
+                    </div>      
+                </div> 
+                
+                <script>
+                    function Createchart(a,b,id){
+                      a=a;
+                      b=b;
+                      // a.push("yumfym")
+                      a=a.split(',');
+                        b=b.split(',')
+                        c=[]
+                        for(x in b){
+                          c.push(parseFloat(b[x]))
+                        }
+                        
+            new Chart( document.getElementById(id).getContext('2d'), {
+            type: 'bar',
+            data: {
+              labels:a,
+              datasets: [{
+                label: '#',
+                data:c,
+                backgroundColor: [
+                  'rgba(255, 99, 132, 0.2)',
+                  'rgba(54, 162, 235, 0.2)',
+                   ],
+                borderColor: [
+                  'rgba(255,99,132,1)',
+                  'rgba(54, 162, 235, 1)'
+              ],
+                borderWidth: 1
+              }]
+            },
+            options: {
+               scales: {
+                   yAxes: [{
+                       ticks: {
+                           beginAtZero:true
+                       }
+                   }]
+               },
+               title: {
+                  display: true,
+                  text: 'Number of users over and under 18 years old',
+                  fontSize: 7
+              }
+            }
+            });
+                    }
+            
+             Createchart('<%=campground.tags%>','<%=campground.importaces%>','<%=campground.id%>')       
+                               
+              </script>
+             <%});%>       
+           </div> 
+    </div>  -->
+  
+    
+ <%include ../partials/footer %>

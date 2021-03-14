@@ -1,0 +1,210 @@
+<% include ../partials/header %>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.1/Chart.min.js"></script>
+    <div class="row">
+        <div class="col-md-3">
+            <p class="lead">YelpCamp</p>
+            <div class="list-group">
+                <li class="list-group-item active">Info 1</li>
+                <li class="list-group-item">Info 2</li>
+                <li class="list-group-item">Info 3</li>
+            </div>
+        </div>
+        <div class="col-md-9">
+            <div class="img-thumbnail">
+                    <canvas id="<%=campground.id%>"></canvas>
+                <div class="caption-full">
+                    <h4><a><%=campground.tags%></a></h4>
+                    <p><%= campground.description %></p>
+                    <p>
+                        <em>Submitted By <%= campground.author.username %></em>
+                        <span class="float-right"><%= moment(campground.createdAt).fromNow() %></span>
+                        <!-- <span class="float-right"><%= campground.predictions %></span> -->
+                    </p>
+                    <% if((currentUser && campground.author.id.equals(currentUser._id))||(currentUser&&currentUser.isAdmin)){ %>
+                        <form style="display: inline"action="/campgrounds/<%= campground._id %>?_method=DELETE" method="POST">
+                            <button class="btn  btn-danger">DELETE</button>
+                        
+
+                        </form>  
+                    <% } %>
+                   
+                </div>
+            </div>
+            <div class="card-header" style="margin-top:10px;">
+                    <div class="text-right">
+                            <a class="btn btn-success" href="/campgrounds/<%= campground._id %>/comments/new">Add New Comment</a>
+                            <a class="btn btn-success" href="/campgrounds/<%= campground._id %>/predictions/new">Add New prediction</a>
+                    </div>
+                <hr>
+                
+                <% campground.comments.forEach(function(comment){ %>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <strong><%= comment.author.username %></strong>
+
+                            <span class="float-right"><%= moment(comment.createdAt).fromNow() %></span>
+                       <div>
+                           <%= comment.text %> 
+                            <% if((currentUser && comment.author.id.equals(currentUser._id))||(currentUser&&currentUser.isAdmin)){ %>
+                                <form style="display: inline" class="float-right" action="/campgrounds/<%=campground._id%>/comments/<%=comment._id%>?_method=DELETE" method="POST">
+                                    <button class="btn  btn-danger btn-sm">DELETE</button>
+                                    <a href="/campgrounds/<%=campground._id%>/comments/<%=comment._id%>/edit" class="btn btn-info btn-sm ">EDIT</a>
+                                </form>
+                            <% } %> 
+                       </div>
+                        </div>
+                    </div>
+                <% }) %>
+                <% campground.predictions.forEach(function(prediction){ %>
+                    <canvas id="<%=prediction.id%>"></canvas>
+                     <h6><%=prediction.resualt%>/h6>
+                    <div class="row">
+                            
+                        <div class="col-md-12">
+                            <strong><%= prediction.author.username %></strong>
+
+                            <span class="float-right"><%= moment(prediction.createdAt).fromNow() %></span>
+                       <div>
+                          
+                            <% if((currentUser && prediction.author.id.equals(currentUser._id))||(currentUser&&currentUser.isAdmin)){ %>
+                                <form style="display: inline" class="float-right" action="/campgrounds/<%=campground._id%>/predictions/<%=prediction._id%>?_method=DELETE" method="POST">
+                                    <button class="btn  btn-danger btn-sm">DELETE</button>
+                                    
+                                </form>
+                            <% } %>
+                            <script>
+                                    var chartColors = {
+                                        red: 'rgb(255, 99, 132)',
+                                        blue: 'rgb(54, 162, 235)'
+                                        };
+                                    a='<%=campground.tags%>'
+                                    b='<%=prediction.NormedData%>'
+                                    a=a.split(',');
+                                    b=b.split(',')
+                                    c=[]
+                                    for (i = 0; i < b.length; i++) {
+                                        if(i==0){
+                                            if(isNaN(b[i])){
+                                                a[0]=b[i]
+                                                c.push(1)
+
+                                            }
+                                        }
+                                        else{
+                                            c.push(parseFloat(b[i]))
+                                        }
+                                    }
+                                    var ctx=( document.getElementById("<%=prediction.id%>").getContext('2d'));
+                                    var myChart=new Chart(ctx, {
+                        type: 'bar',
+                        data: {
+                          labels:a,
+                          datasets: [{
+                            label: '<%=campground.name%>',
+                            data:c,
+                            backgroundColor: [
+                                chartColors.blue,
+                                chartColors.blue,
+                                chartColors.blue,
+                                chartColors.blue
+                               ],
+                            borderColor: [
+                              'rgba(255,99,132,1)',
+                              'rgba(54, 162, 235, 1)'
+                          ],
+                            borderWidth: 1
+                          }]
+                        },
+                        options: {
+                           scales: {
+                               yAxes: [{
+                                   ticks: {
+                                    max: 1,
+                                    min: 0,
+                                    stepSize: 0.1,  
+                                    beginAtZero:true
+                                   }
+                               }]
+                           },
+                           title: {
+                              display: true,
+                              text: 'Number of users over and under 18 years old',
+                              fontSize: 7
+                          }
+                        }
+                        });
+              
+                        var colorChangeValue = 0.5; //set this to whatever is the deciding color change value
+                        var dataset = myChart.data.datasets[0];
+                        for (var i = 0; i < dataset.data.length; i++) {
+                        if (dataset.data[i] > colorChangeValue) {
+                            dataset.backgroundColor[i] = chartColors.red;
+                        }
+                        }
+                        myChart.update();
+
+                                  </script>
+                         
+                       </div>
+                        </div>
+                    </div>
+                <% }) %>
+            </div>
+        </div>
+    </div>
+    <script>
+            a='<%=campground.tags%>'
+            b='<%=campground.importaces%>'
+            a=a.split(',');
+            b=b.split(',')
+            c=[]
+            for(x in b){
+              c.push(parseFloat(b[x]))
+            }
+            
+            
+new Chart( document.getElementById("<%=campground.id%>").getContext('2d'), {
+type: 'bar',
+data: {
+  labels:a,
+  datasets: [{
+    label: '#',
+    data:c,
+    color: [
+    'red',    // color for data at index 0
+    'blue',   // color for data at index 1
+    'green',  // color for data at index 2
+    'black',  // color for data at index 3
+    //...
+]
+
+                            ,
+    backgroundColor: [
+      'rgba(255, 99, 132, 0.2)',
+      'rgba(54, 162, 235, 0.2)',
+       ],
+    borderColor: [
+      'rgba(255,99,132,1)',
+      'rgba(54, 162, 235, 1)'
+  ],
+    borderWidth: 1
+  }]
+},
+options: {
+   scales: {
+       yAxes: [{
+           ticks: {
+               beginAtZero:true
+           }
+       }]
+   },
+   title: {
+      display: true,
+      text: 'Number of users over and under 18 years old',
+      fontSize: 7
+  }
+}
+});
+          </script>
+
+<% include ../partials/footer %>

@@ -1,0 +1,64 @@
+<%include ../partials/header.ejs %>
+<div class="container">
+        <div class="jumbotron">
+               <h1 class="text-center">File uploading!</h1>
+               
+        </div>
+         
+    <form id        =  "uploadForm"
+            enctype   =  "multipart/form-data"
+            action    =  "/upload"
+            method    =  "post"
+        >
+        <select class="custom-select" id="learnType" name="learnType">
+                <option selected>Learning Type</option>
+                <option value="1">Regression</option>
+                <option value="2">classification</option>
+                
+        </select>
+        <div class="form-check form-check-inline">
+           <h6>any column to transformed?</h6>    
+        </div>       
+        <label for="yes"class="radio-inline"><input type="radio" name="coltRadio" value="1" checked>yes</label>
+        <label for="no"class="radio-inline"><input type="radio" name="coltRadio" value="2">no</label>
+        <div class="form-check form-check-inline">
+           <h6>transformed column index:</h6>    
+        </div>        
+        <input type="number" class="radio-inline" id="colTindex"name ="colTindex" min="0" max="5">
+        <div class="form-check form-check-inline"  >
+             <h6>number of independent varaible:</h6>
+        </div>       
+        <input type="number" class="radio-inline" id="numOfInVar"name ="numOfInVar" min="1" max="5">
+        <div class="form-check form-check-inline"  >
+             <h6>index of unuesed varaible:(optional)</h6>
+        </div>
+        <input type="number" class="radio-inline" id="unUsedVarIndex"name ="unUsedVarIndex" min="0" max="5">
+            
+            <div class="form-group">
+            <input class="form-control"type="text" name="name" placeholder="enter name">
+            </div>
+            <div class="form-group">
+                    <label for="Categorial Data">Categorial Data(seperate by ',')</label>
+                    <textarea class="form-control" id="CategorialData" name="CategorialData" rows="1"></textarea>
+            </div>
+            <input type="file" name="file" />Upload
+            <input type="submit" value="Upload" name="submit">
+        
+    </form> 
+</div>
+<script>
+  $('#uploadForm input').on('change', function() {
+     if( $( "input:checked" ).val()==1){
+        $( "#colTindex" ).prop( "disabled", false );
+        $( "#CategorialData" ).prop( "disabled", false );
+     }
+     if( $( "input:checked" ).val()==2){
+        $( "#colTindex" ).prop( "disabled", true );
+        $( "#CategorialData" ).prop( "disabled", true );
+     }
+     
+  });
+</script>
+
+
+<%include ../partials/footer%>
